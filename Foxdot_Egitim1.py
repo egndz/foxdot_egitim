@@ -257,11 +257,13 @@ p1 >> swell(b1.pitch + ([0,2],5), oct=[5,5,6,6])
 
 p1 >> swell(b1.pitch + ([0,2],[5,7]), dur = [1/2,1/2,1/4,1])
 
-d2 >> play("  -|n3|-")
+d2 >> play(" -|n3|-")
 
 b1.amplify = p1.amplify = [1,2,3,2]
 
-p1.solo()
+Group(p1,d1).solo(0)
+
+d4 >> play("[---]")
 
 Clock.clear()
 
@@ -299,27 +301,39 @@ b1 >> jbass(chop = 2, delay = [0.5,(0,0.5)], fmod = [-3,3], sus = 2, blur = var(
 
 b1.stop()
 
+#lpf: alcak geciren filtre. degerin altindaki frekanslari gecirir.
+
+p1 >> pads([0,2,4,5])
+
+p1.lpf = [100,200]
+
+#hpf: yuksek geciren filtre. degerin ustundeki frekanslari gecirir.
+
+p1 >> pads([0,2,4,5])
+
+p1.hpf = [1000,1200]
+
 #vibrato: sesin frekansini module edersiniz
 
 b2 >> blip([1,2,3,4],oct=4, dur = 4)
 
-b2 >> blip(vib=1,vibdepth=[0,.1,.2,.3])
+b2 >> blip(vib=1,vibdepth=[0,.1,.2,.3,.8])
 
 b2.stop()
 
-#slide: argumanin degeri n olsun, frekans (n+1) ile carpilir: ornegin 0 verirseniz frekans sifira gider.
+#slide: argumanin degeri n olsun, frekans (n+1) ile carpilir: ornegin 0 verirseniz frekans sifira gider. ((n+1)*f)
 
 b3 >> pluck(1,dur=4,slide=[-1,1])
 
 b3.stop()
 
-b4 >> pluck(dur=[2,4], bpm = 60,slide = [-1,1],slidedelay=[0,0.5]) #Baslangici 2 beat geciktirir.
+b4 >> pluck(dur=4,slide = [-1,1],slidedelay=[0,0.5]) #Baslangici 2 beat geciktirir.
 d1 >> play("x ")
 
 b4.stop()
 
 #slidefrom: slidein baslangic noktasini secersiniz ve pese dogru iner.
-b5 >> blip([0,0,0],dur=4, slidefrom=[-1,0,1,2,3])
+b5 >> blip(0,dur=4, slidefrom=[-1,0,1,2,3])
 
 b5.stop()
 
@@ -350,7 +364,7 @@ p3 >> keys(dur=8,echo=[.125,.25,.5,1,2,4]) #.125,.25,.5,1.. seklinde vurus(beat)
 
 p3.stop()
 
-p3 >> keys(dur=8, echo=[.5], echotime=8) #echotime echo sayisini arttirir.
+p3 >> keys(dur=8, echo=[.5], echotime=4) #echotime echo sayisini arttirir.
 
 #pan:cikis olarak iki kanal kullanan FoxDotta sesi sag/sol cikislara dagitmak icin kullanilir.
 
@@ -380,13 +394,14 @@ p6 >> pads(formant=P[:7],oct=5)
 
 p6.stop()
 
-#tremolo: sesin ?iddetini bir sinus dalgasiyla sekillendirir. bir vurusta verilen deger kadar module eder.
+#tremolo: sesin siddetini bir sinus dalgasiyla sekillendirir. bir vurusta verilen deger kadar module eder.
 
 p7 >> pads(dur=4,tremolo=[0,1,2,3,4])
 
 p7.stop()
 
 #pshift: verilen deger kadar yarim perde yukari ya da asagi ceker.
+
 p8 >> pads(pshift = [0,2,4,5])
 
 p9 >> pads([0,1,2,3])
@@ -443,6 +458,8 @@ p1 >> gong([0,0,0,3,2]).sometimes("arp",[1,2,3])
 
 d1 >> play("x-x[---]").every(4.4,"jump",cycle=8)
 
+'ONEML?: sakin everynin ilk argumanina 0 vermeyin!'
+
 #spread
 
 d1 >> play("Xv")
@@ -459,13 +476,31 @@ p1 >> pluck([0,4,5,3],dur = 4)
 
 p2 >> blip(p1.pitch[0])
 
-"""BOLUM 4.: ALGORITMIK MANIPULASYON"""
+p_all.stop()
 
-
-p1 >> pluck([0,4,5,3], dur = 4,amp=0)
+p1 >> pluck([0,1], dur = 4,amp=0)
 
 p3 >> blip(p1.pitch)
 
-p2 >> blip(p1.pitch[0].accompany())
+p2 >> blip(p1.pitch[0].accompany(rel=[0])) #alt ve ust oktavlar arasi rastgele gecis yapar, rel argumanina verilen deger ise ekstra nota ekler.
 
-print(p1.pitch[1])
+print(p2.freq)
+
+#TIP 7: p1.pitch seklinde yazmak istemezseniz .follow() kullanabilirsiniz.
+
+p1 >> blip([0,3,5])
+
+p2 >> jbass(p1.pitch, amp=.6)
+
+p3 >> jbass().follow(p1)
+
+p4 >> gong(p1.pitch +(0,2,5))
+
+p5 >> gong().follow(p1) + (0,2,5)
+
+p_all.stop()
+
+Clock.clear()
+
+
+'Birinci calisma dokumaninin sonuna geldik!'
