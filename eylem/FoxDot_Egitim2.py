@@ -32,15 +32,13 @@ p5 >> keys(P[0:4] ** P[-1:3]) #ussunu alir
 
 p5.stop()
 
-p6 >> keys(P[1:3] & P[3:6]) #ikili sekilde beraber calar(PGroups)
+p6 >> keys(P[1:4] & P[3:6]) #ikili sekilde beraber calar(PGroups)
 
-p6.stop()
+p7 >> keys([(1,3),(2,4),(3,5)])
+
+p_all.stop()
 
 'Patternler arasinda goruldugu uzere islem yapilabilmektedir. Pattern uzunluklarinin ayni olmasina gerek yoktur.'
-
-print(P[0:4] ** P[-1,0])
-
-Clock.clear()
 
 #TIP 0: Patern objeleri ile davul samplelarini calabilir ve bazi patern metodlarini da kullanabilirsiniz, ornegin reverse!
 
@@ -52,7 +50,7 @@ Clock.clear()
 
 'Paterni uzatip elemanlari rastgele dagitmak mi istiyorsunuz?'
 
-p1 >> keys(P[:4].shuffle(2)) #argumanin degeri paternin uzunlugunu vermektedir.
+p1 >> keys(P[:4].shuffle(2)) #argumanin degeri paternin kac defa cogullanacagini belirtmektedir.
 
 p1.stop()
 
@@ -62,23 +60,22 @@ p2.stop()
 
 'Patern patern(PGroups) icinde... Bir varmis bir yokmus!'
 
-p5 >> keys(P(1,[2,8]).shuffle(2),dur=2)
+P[1,2,3]
 
-print(P(1,[7,8]).shuffle(2))
-print(P(1,[7,8]).shufflets(2))
+p1>> pluck(P(1,2))
 
-p5 >> keys(P(1,[2,8]).shufflets(2)) #argumanin degeri tekrar paternin uzunlugunu verir. 
+p3 >> pluck(P[1,[2,3]].shufflets(3))
 
-p6 >> keys(P(1,[2,3]).shufflets(2))
+p4 >> pluck(P[[1,0],[2,3]].shufflets(3))
 
-Clock.clear()
+print(p3.pitch)
 
-p1.stop()
+p_all.stop()
 
-print(P[1,[2,3]].shufflets(2))
+
+#shuffle ve shufflets arasindaki fark:
+print(P[1,[2,3]].shuffle(2))
 print(P(1,[2,3]).shufflets(2))
-
-print(P[:4].shuffle(3))
 
 'Paterni tersine nasil ceviririz?'
 
@@ -93,19 +90,15 @@ p_all.stop()
 print(P[:4,[5,6]].reverse())
 print(P[:4,[5,6]].mirror())
 
-Clock.clear()
-
 'Paternimizin icerisindeki sayilari hizaya nasil getiririz?'
 
-p1 >> blip(P[1,6,5,3,4,2,0].sort(reverse = False))
+p1 >> blip(P[1,6,5,3,4,2,0].sort(reverse=True))
 
 p1.stop()
 
 p2 >> blip(P[(1,3),(7,5,4,3),(4,3,2)].sort()) #PGroup eleman sayisina gore siralar.
 
 p2.stop()
-
-Clock.clear()
 
 '3 elma, 3 armut, 3 karpuz'
 
@@ -115,11 +108,9 @@ p1.stop()
 
 print(P[0,1,2].stutter([3,4,5])) #dizi vererek hangi elemani kac defa isteyeceginizi belirtebilirsiniz.
 
-Clock.clear()
-
 'Arpeggiattooo!'
 
-p1 >> pluck(P[:4].arp([0,3]))
+p1 >> pluck(P[0,1].arp([5,6]))
 
 p1.stop()
 
@@ -129,11 +120,13 @@ Clock.clear()
 
 'Cesnilendirelim mi?'
 
-p1 >> blip(P[1,2,3,4].splice(8))
+p1 >> blip(P[1,2,3,4].splice())
 
 p1.stop()
 
-print(P[1,2,3,4].splice([5,6]))
+p2 >> blip(P[1,2,3,4].splice([7,6,5,4]))
+
+print(P[1,2,3,4].splice([7,6,5,4]))
 
 Clock.clear()
 
@@ -144,8 +137,9 @@ p1 >> blip(P[2,5,4,12].invert())
 p1.stop()
 
 'Ross Geller, is that you bruh?'
+# https://www.youtube.com/watch?v=n67RYI_0sc0
 
-p1 >> pads(P[1,2,3,4].pivot(1)) #reverse ardindan indeksi verilen eleman yerine otursun diye rotate; kisacasi reverse+rotate.
+p1 >> pads(P[1,2,3,4].pivot(1)) #reverse+rotate yapar.
 
 p1.stop()
 
@@ -155,11 +149,11 @@ Clock.clear()
 
 'Toplaya toplaya gidek'
 
-p1 >> blip(P[:4].accum())
+p1 >> blip(P[1,2,3,4].accum())
 
 p1.stop()
 
-print(P[1,2,3,4].accum(7))
+print(P[1,2,3,4].accum(8))
 
 'GYM CLASS: CARDIO TIME!'
 
@@ -171,35 +165,35 @@ print(P[:4].stretch(6))
 
 'Tras zamani.'
 
-p1 >> keys(P[:5].trim([2,3]))
+p1 >> keys(P[:5].trim(3))
 
 p1.stop()
 
-'Baslangic!'
+'Sondan tras.'
 
 p1 >> blip(P[1:6].ltrim(1))
 
 p1.stop()
 
-print(P[:6].ltrim(1))
+print(P[1,2,3,4,5].ltrim(1))
 
 'Donguler'
 
-p1 >> pluck(P[:4].loop(4, lambda x:x+2))
+p1 >> pluck(P[0].loop(4, lambda x:x+2),dur=2)
 
-p1 >> pluck(P[:4].loop(2) | P[7,8])
+p1 >> pluck(P[0,1].loop(2) | P[7,8])
 
-p1 >> pluck(P[:4].loop(2) + [1,2,3,4])
+p1 >> pluck(P[0].loop(2) + [1,2,3,4])
 
-p1 >> pluck(P[:4].loop(2) +(0,5))
+p1 >> pluck(P[1,2].loop(2) +(0,5)) #P(1,6),P(2,7),P(1,6),P(2,7)...
 
 ## loop boyle bi' ise yaramiyor gibi duruyor. Hmmm... baska neler yapilabilir?
 
-p1 >> pluck(P[1,3,5].loop(2) | P/(1,3,5,7,9), dur = var([1/2,1],[4,1]), lpf= linvar([800,1500,400],8))
+p1 >> pluck(P[1,3,5].loop(1) | P**(2,4,6), dur = var([1/4,1],[4,1]),amp=1)
 
 ##every mi eklesek?
 
-p1 >> pluck(P[1,3,5].loop(2).every(4,"offadd",2).every(2,"arp",[1,2,3,4]) | P(1,[2,3],5), dur= var([1/2,1],[4,1]), sus=2, lpf=1200)
+p1 >> pluck(P[1,3,5].loop(2).every(4,"offadd",2).every(2,"arp",[1,2,3,4]) | P(1,[2,3],5), dur= var([1/2,1],[4,1]), sus=2, lpf=1000,room=1,mix=.7)
 
 p1.stop()
 
@@ -237,7 +231,7 @@ p1.stop()
 
 'eskisini getir yenisini al'
 
-p1 >> pluck(P[:4].every(4,"alt",[4,5,6,7]))
+p1 >> pluck(P[:4].every(4,"alt",[4,5,6,7]))#her 4 vurusta bir P[:4] yerine [4,5,6,7] cal.
 
 p1.stop()
 
@@ -259,7 +253,7 @@ print(P[1,2,2,2,3,4,4,4,4].undup())
 
 'jawline'
 
-p2 >> blip(P[0,1,2,3,4].replace(2,9))
+p2 >> blip(P[0,1,2,3,4]].replace(3,9))
 
 p2.stop()
 
@@ -269,11 +263,11 @@ p3 >> blip(P[0,1,2,3,4].submap({1:8,2:9,4:[9,10]}))
 
 p3.stop()
 
-''
+'Asil paterne kat cikalim'
 
-p4 >> pluck(P[1,2,3,4].layer("norm"))
+p4 >> pluck(P[1,2,3,4].layer("norm")) 
 
-p4 >> pluck(P[0,0].layer("offadd",[1,9]),dur=2)
+p4 >> pluck(P[0,0].layer("offadd",[1,9]),dur=2) #P[0,1],P[0,9],P[0,1],P[0,9]..seklinde zipleyerek calar.
 
 p5 >> pluck(P[0,1].layer(lambda x:x+2),dur=2)
 
@@ -289,28 +283,27 @@ p2 >> blip(P[:4] | [4,5])
 
 'winrar,lisansli'
 
-p1 >> pluck(P[0,1,2,3].zip([4,5]))
-
+p1 >> pluck(P[0,1,2,3].zip([4,5]),dur=2)
 
 'topla-ziple-geciktir'
 
-p1 >> blip(P[:4].offadd([2,3],2))
-
-print(P[:4].offadd([2,3],2))
+p1 >> blip(P[0,1,2].offadd(2,2),dur=4)
 
 'offaddin carpimlisi'
 
-p2 >> pluck(P[:4].offmul(2,2))
+p2 >> pluck(P[:4].offmul(2,2),dur=2)
 
 print(P[:4].offmul(2,2))
 
 'geciktirmeli layer'
 
-p3 >> blip(P[:4].offlayer("reverse",2))
+p3 >> blip(P[:4].offlayer("reverse",2),dur=2)
 
-'oh wow such a drummer thing'
+'oh wow such a drummer thing, amen brothers!'
+# https://www.youtube.com/watch?v=tNvGd1WIB1Y
 
-d1 >> play("x-hh",dur=4).every(4,"amen")
+d1 >> play("x-o-",dur=1/2).every(4,"amen")
+
 d1.stop()
 
 """BOLUM 3.3: PATERN FONKSIYONLARI"""
@@ -326,7 +319,7 @@ d1 >> play(PStep([2,4],"-","x"))
 
 d1.stop()
 
-p1 >> gong(PRange(10,0,2).palindrome())
+p1 >> gong(PRange(10,0,2).palindrome()) #PRange(start,stop=None,step=None)
 
 p1.stop()
 
@@ -343,13 +336,13 @@ print(PTri(10,0,2))
 print(PEuclid(5,8))
 print(PEuclid(5,8)+[2,3])#sirayla ekler!
 
-p2 >> blip(PEuclid(5,8)+[2,3]) #
+p2 >> blip(PEuclid(5,8)+[2,3])
 
 print(PEuclid2(5,8,"v","s")) #8 eleman, 5i default!
 
 print(PStep(5,"v","s"))
 
-d1 >> play(PEuclid2(5,8,"v#","s"))
+d1 >> play(PEuclid2(5,8,"x2","1s"))
 
 d1.stop()
 
@@ -357,14 +350,15 @@ d1.stop()
 
 """Bu fonksiyonlar arasinda siklikla kullanilan bir baska fonksiyon bulunmaktadir: PDur."""
 
-print(PDur(3,8))
+print(PDur(3,8)) #PDur(n,k,start,dur=.25)
+
 print(PDur(PRange(4,0),4))
 
 #PDur Euclidean ritim diye gecmektedir. Ornegin, (3,8)'de 8 vurusa 3 pulse dagitir.
 
 print(PSine(16)) #genligi -1 ile 1 arasinda olan bir sinus dalgasi.
 
-print(PSq(2,2,4))
+print(PSq(2,2,5))
 
 
 """BOLUM 3.4: PATERN URETECLERI"""
@@ -373,18 +367,17 @@ print(PSq(2,2,4))
 
 'rastgele bisiler calalim'
 
+p1 >> pluck(PRand(2,10)[:5])
+
+p1.stop()
+
 print(PRand(2,10)[:10])
-
-p1 >> space(PRand(2,10)[:5], spin=16)
-d1 >> play("[ss] ").spread()
-
-Group(p1,d1).stop()
 
 'bi giydigimi bi daha giymeyeyim'
 
 print(PxRand(1,5)[:10])
 
-p1 >> blip(PxRand(1,5)[:10])
+p1 >> blip(PxRand(1,10)[:10]) #ayni elemanlar arka arkaya gelmez!
 
 p1.stop()
 
@@ -396,14 +389,14 @@ p2.stop()
 
 print(PWhite(-1,1)[:5])
 
-p1 >> klank(PWhite(-5,5)[:15],tremolo=PSine(16), shape=sinvar([.1,.5],32),dur=4,oct=[4,3,2,1])
+p1 >> klank(PWhite(-4,4)[:15],tremolo=PSine(16), shape=sinvar([.1,.5],32),dur=4,oct=[4,3,2,1])
 p2 >> space(p1.pitch,dur=4, oct=5)
 
 p_all.stop()
 
 'ileri-geri rand!'
 
-print(PWalk(12,2,0)[:20])
+print(PWalk(9,2,0)[:20])
 
 p1 >> keys(PWalk(12,3)[:20])
 
@@ -411,9 +404,9 @@ p1.stop()
 
 'ufak ufak degissin'
 
-print(PDelta([.1,-.1],2)[:10])
+print(PDelta([.1,-.4],2)[:10])
 
-p1 >> pluck(PDelta([.1,0,-.1])[:20]+P*(0,1,3,4),dur=PDur(2,8),lpf = sinvar([500,2000],8)).every(8,"reverse")
+p1 >> pluck(PDelta([.1,-.1])[:20]+P**(0,1,3,4),dur=PDur(2,8),lpf = sinvar([500,2000],8)).every(8,"reverse")
 
 p1.stop()
 
@@ -433,14 +426,16 @@ p1.stop()
 
 'tek duration cok nota'
 
-p1 >> blip(P*[1,2,3])
+p1 >> blip(P*(1,2,3),dur=1)
+
+p2 >> blip(P*[1,2,3]) 
 
 p2 >> blip(P*(0,1,2), amp=.5) #sirayla ama ayni duration(sure) icerisinde calar.
 d1 >> play("X ")
 
 Group(p2,d1).stop()
 
-p1 >> pluck(P+(1,2,3),dur=4,sus=1)
+p1 >> pluck(P+(1,2,3),dur=4,sus=var([0,2],4)) #durationdan bagimsiz, sustaini kullanir.
 
 p1.stop()
 
@@ -461,18 +456,19 @@ p_all.stop()
 
 'delayli P*()'
 
-p3 >> pluck(P[0,1,P/(2,4,6,8)])
+p3 >> pluck(P/(2,4,6,8),dur=2)
 
 p3.stop()
 
 'delayi belirleyebildigimiz P/()'
 
-p4 >> pluck(P^(0,2,5,.2),dur=4)
-
+p4 >> pluck(P^(0,2,5,7),dur=4)
 
 p4 >> pluck(P^(var([-1,0,1],8),5,10,.5),dur=1, bpm=80)
 
 p4.stop()
+
+
 
 
 'ZORLU BIR BOLUMUN SONUNA GELDIK. TEBRIK EDIYORUM.'
